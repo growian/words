@@ -1,0 +1,76 @@
+Aachen
+Augsburg
+Bergisch Gladbach
+Berlin
+Bielefeld
+Bochum
+Bonn
+Bottrop
+Braunschweig
+Bremen
+Bremerhaven
+Chemnitz
+Darmstadt
+Dortmund
+Dresden
+Duisburg
+Düsseldorf
+Erfurt
+Erlangen
+Essen
+Frankfurt am Main
+Freiburg im Breisgau
+Fürth
+Gelsenkirchen
+Göttingen
+Hagen
+Halle
+Hamburg
+Hamm
+Hannover
+Heidelberg
+Heilbronn
+Herne
+Ingolstadt
+Jena
+Karlsruhe
+Kassel
+Kiel
+Koblenz
+Krefeld
+Köln
+Leipzig
+Leverkusen
+Lübeck
+Ludwigshafen am Rhein
+Magdeburg
+Mainz
+Mannheim
+Moers
+Mönchengladbach
+Mülheim an der Ruhr
+München
+Münster
+Neuss
+Nürnberg
+Oberhausen
+Offenbach am Main
+Oldenburg
+Osnabrück
+Paderborn
+Pforzheim
+Potsdam
+Recklinghausen
+Regensburg
+Remscheid
+Reutlingen
+Rostock
+Saarbrücken
+Solingen
+Stuttgart
+Trier
+Ulm
+Wiesbaden
+Wolfsburg
+Wuppertal
+Würzburg
