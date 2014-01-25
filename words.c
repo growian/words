@@ -6,7 +6,6 @@
 #define MAXLEN_WORD 64
 #define MAX_AL 26
 
-
 struct word {
    char *val;
    struct word *next; 
@@ -134,7 +133,7 @@ int main() {
    char input[MAXLEN_WORD];
    while (1) {
       int ifi, ila, len_chain = 0;
-      char *ps;
+      char* ps;
       while (1) {
          printf("Next word: ");
          fgets(input, MAXLEN_WORD, stdin);
