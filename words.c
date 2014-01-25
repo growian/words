@@ -6,6 +6,8 @@
 #define MAXLEN_WORD 64
 #define MAX_AL 26
 
+// ndeuer kommentar
+
 struct word {
    char *val;
    struct word *next; 
