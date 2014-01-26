@@ -5,58 +5,56 @@
 #define FILENAME "cities.txt" 
 #define MAXLEN_WORD 64
 #define MAX_AL 26
+#define ASCII_OFFSET 65
 
-struct word {
-   char *val;
-   struct word *next; 
-};
+typedef struct word {
+   char* val;
+   struct word* next; 
+} word;
 
-void chomp(char *str) {
-   size_t p=strlen(str);
-   str[p-1]='\0';
+void chomp(char* str) {
+   size_t l = strlen(str);
+   str[l-1] = '\0';
 }
 
-int index_first(char *str) {
-   return (toupper(str[0]))-65;
+int index_first(char* str) {
+   return toupper(str[0]) - ASCII_OFFSET;
 }
 
 int index_last(char *str) {
-   int last_char = strlen(str)-1;
-   return (toupper(str[last_char]))-65;
+   int last_char = strlen(str) - 1;
+   return toupper(str[last_char]) - ASCII_OFFSET;
 }
 
-struct word *create_word(char *str) {
-   struct word *w = malloc(sizeof(struct word));
+word* create_word(char* str) {
+   word* w = malloc(sizeof(word));
    w->val = str;
    return w;
 }
 
-struct word *append_word(struct word *w, char *str) {
-   w->next = malloc(sizeof(struct word));
-   w = w->next;
-   w->val = str;
-   return w;
+word* append_word(word* w, char* str) {
+   w->next = create_word(str);
+   return w->next;
 }
 
-struct word *prefix_word(struct word *w, char *str) {
-   struct word *tmp = malloc(sizeof(struct word));
-   tmp->val = str;
+word* prefix_word(word* w, char* str) {
+   word* tmp = create_word(str);
    tmp->next = w;
    return tmp; 
 }
 
-struct word *delete_word(struct word *w, char *str) {
+word* delete_word(word* w, char* str) {
    if (strcmp(str, w->val) == 0) {
       return w->next;
    } else {
-      struct word *tmp = w;
-      struct word *pre;
-      while (tmp->next != NULL) {
-         pre = tmp;
-         tmp = tmp->next;
-         if (strcmp(str, tmp->val) == 0) {
-            if (tmp->next != NULL) {
-               pre->next = tmp->next;
+      word *curr = w;
+      word *pre;
+      while (curr->next != NULL) {
+         pre = curr;
+         curr = curr->next;
+         if (strcmp(str, curr->val) == 0) {
+            if (curr->next != NULL) {
+               pre->next = curr->next;
             } else {
                pre->next = NULL;
             } 
@@ -67,42 +65,36 @@ struct word *delete_word(struct word *w, char *str) {
    return w;
 }
 
-char *str_to_heap(char *str) {
-   char *ptr = malloc(sizeof(strlen(str)));
-   strcpy(ptr, str);
-   return ptr;
-}
-
-void add_to_list(struct word **ppw, char *str) {
-   if (*ppw == NULL) {
-      *ppw = create_word(str);
+void add_to_list(word* w, char* str) {
+   if (w == NULL) {
+      w = create_word(str);
    } else { 
-      struct word *pw = *ppw;
-      while (pw->next != NULL)
-         pw = pw->next;
-      append_word(pw, str);         
+      while (w->next != NULL)
+         w = w->next;
+      append_word(w, str);         
+      printf("new  word added");
    }
 }
 
-int read_file(struct word *words_first[], struct word *words_last[]) {
+int read_file(word* first[], word* last[]) {
    FILE* file = fopen(FILENAME, "r");
    char buffer[MAXLEN_WORD];
-   char *str;
+   char* str;
    int ifi, ila, num_words = 0;
    while (fgets(buffer, MAXLEN_WORD, file)) {
       chomp(buffer);
-      str = str_to_heap(buffer);
+      str = strdup(buffer);
       ifi = index_first(str);
       ila = index_last(str);
-      add_to_list(words_first+ifi, str);
-      add_to_list(words_last+ila, str);
+      add_to_list(first[ifi], str);
+      add_to_list(last[ila], str);
       num_words++;
    }
    return num_words;
 }
 
-char *find_word_in_list(struct word *w, char *str) {
-   struct word *tmp = w;
+char *find_word_in_list(word *w, char *str) {
+   word *tmp = w;
    while (tmp != NULL) {
       if (strcmp(str, tmp->val) == 0)
          return tmp->val; 
@@ -111,24 +103,26 @@ char *find_word_in_list(struct word *w, char *str) {
    return NULL;
 }
 
-void print_list(struct word *w) {
-   struct word *tmp = w;
+void print_list(word *w) {
+   word *tmp = w;
    while (tmp != NULL) {
       printf("%s, ", tmp->val);
       tmp = tmp->next;
    }
 }
 
-void print_array(struct word *w[]) {
+void print_array(word *w[]) {
    for (int i = 0; i < MAX_AL; i++) {
       print_list(w[i]);
    }
 }
 
 int main() {
-   struct word *xchain = NULL, *chainx = NULL; 
-   struct word *words_first[MAX_AL] = {NULL}, *words_last[MAX_AL] = {NULL};
-   int words_left = read_file(words_first, words_last);
+   word* chainbegin = NULL;
+   word* chainend = NULL; 
+   word* first[MAX_AL] = {0};
+   word* last[MAX_AL] = {0};
+   int words_left = read_file(first, last);
    printf("%i words left\n", words_left);
    char input[MAXLEN_WORD];
    while (1) {
@@ -139,19 +133,19 @@ int main() {
          fgets(input, MAXLEN_WORD, stdin);
          chomp(input);
          if (strlen(input) == 0) { 		// Erste Eingabe 0
-            print_array(words_first);
+            print_array(first);
             printf("\n");
             continue;
          } else {   	
             ifi = index_first(input);
             ila = index_last(input);			
-            ps = find_word_in_list(words_first[ifi], input);
+            ps = find_word_in_list(first[ifi], input);
             if (ps != NULL) {			// Neue Chain anlegen und spiel starten
-               xchain = create_word(ps);
+               chainbegin = create_word(ps);
                len_chain++;
-               chainx = xchain;
-               words_first[ifi] = delete_word(words_first[ifi], ps);     
-               words_last[ila] = delete_word(words_last[ila], ps);      
+               chainend = chainbegin;
+               first[ifi] = delete_word(first[ifi], ps);     
+               last[ila] = delete_word(last[ila], ps);      
                words_left--;
                break;
             } else {				// Wort ist nicht in der Liste
@@ -161,26 +155,26 @@ int main() {
          }
       }   
       while (1) {
-         ifi = index_first(xchain->val);			
-         ila = index_last(chainx->val);
+         ifi = index_first(chainbegin->val);			
+         ila = index_last(chainend->val);
          printf("%i words left\n", words_left);
-         printf("Current chain of %i words: %s ... %s\n",len_chain ,xchain->val, chainx->val);
+         printf("Current chain of %i words: %s ... %s\n",len_chain ,chainbegin->val, chainend->val);
          printf("Next word: ");
          fgets(input, MAXLEN_WORD, stdin);
          chomp(input);
          if (strlen(input) == 0) { 		// Erste Eingabe 0
-            print_list(words_last[ifi]);
-            print_list(words_first[ila]); 
+            print_list(last[ifi]);
+            print_list(first[ila]); 
             printf("\n");
             continue;
          } else {   				
-            ps = find_word_in_list(words_last[ifi], input);	// entweder das wort passt vorne an die kette
+            ps = find_word_in_list(last[ifi], input);	// entweder das wort passt vorne an die kette
             if (ps != NULL) {
-               xchain = prefix_word(xchain, ps); 
+               chainbegin = prefix_word(chainbegin, ps); 
             } else {
-               ps = find_word_in_list(words_first[ila], input);	// oder hinten
+               ps = find_word_in_list(first[ila], input);	// oder hinten
                if (ps != NULL) {
-                  chainx = append_word(chainx, ps);
+                  chainend = append_word(chainend, ps);
                } else {
                   printf("Word not in index or not matching or already used\n");			// oder gar nicht
                   continue;
@@ -188,8 +182,8 @@ int main() {
             }
             ifi = index_first(ps);
             ila = index_last(ps); 
-            words_last[ila] = delete_word(words_last[ila], ps);      
-            words_first[ifi] = delete_word(words_first[ifi], ps);     
+            last[ila] = delete_word(last[ila], ps);      
+            first[ifi] = delete_word(first[ifi], ps);     
             words_left--;
             len_chain++;
          }
