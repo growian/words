@@ -7,6 +7,8 @@
 #define MAX_AL 26
 #define ASCII_OFFSET 65
 
+//
+
 typedef struct word {
    char* val;
    struct word* next; 
